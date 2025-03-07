@@ -49,6 +49,7 @@ function displayJobs(jobs) {
     const jobResults = document.getElementById("jobResults");
 
     jobResults.innerHTML = jobs.map(job => {
+        
         const sanitizedJob = {
             id: job.job_id,
             title: job.job_title?.replace(/['"\\]/g, '\\$&') || '',
@@ -58,9 +59,14 @@ function displayJobs(jobs) {
             applyLink: job.job_apply_link?.replace(/['"\\]/g, '\\$&') || '',
             description: job.job_description?.replace(/['"\\]/g, '\\$&') || '',
             type: job.job_employment_type?.replace(/['"\\]/g, '\\$&') || 'N/A',
-            minSalary: job.job_min_salary || 'Not Specified',
-            maxSalary: job.job_max_salary || ''
+            min_salary: typeof job.job_min_salary === 'string' ? 
+                       job.job_min_salary.replace(/['"\\]/g, '\\$&') : 
+                       job.job_min_salary || 'N/A',
+            max_salary: typeof job.job_max_salary === 'string' ? 
+                       job.job_max_salary.replace(/['"\\]/g, '\\$&') : 
+                       job.job_max_salary || 'N/A'
         };
+       
 
         return `
             <div class="job-card">
@@ -76,8 +82,8 @@ function displayJobs(jobs) {
                         </div>
                         <div class="info-item">
                             <span class="info-label">💰 Salary:</span>
-                            <span class="info-value">${sanitizedJob.minSalary !== 'Not Specified' ? 
-                                `$${sanitizedJob.minSalary} - $${sanitizedJob.maxSalary}` : 
+                            <span class="info-value">${sanitizedJob.min_salary !== 'Not Specified' ? 
+                                `${sanitizedJob.min_salary} - ${sanitizedJob.max_salary}` : 
                                 "Not Specified"}</span>
                         </div>
                         <div class="info-item">
@@ -86,22 +92,12 @@ function displayJobs(jobs) {
                         </div>
                     </div>
                 </div>
-                    <button class="apply-btn" onclick="window.open('${sanitizedJob.applyLink}', '_blank')">
-                        Apply Now
-                    </button>
-                    <button class="save-btn" onclick="saveJob(
-                        '${sanitizedJob.id}',
-                        '${sanitizedJob.title}',
-                        '${sanitizedJob.company}',
-                        '${sanitizedJob.city}, ${sanitizedJob.country}',
-                        '${sanitizedJob.applyLink}',
-                        '${sanitizedJob.description}',
-                        '${sanitizedJob.type}',
-                        '${sanitizedJob.minSalary}',
-                        '${sanitizedJob.maxSalary}'
-                    )">
-                        Save Job
-                    </button>
+                <button class="apply-btn" onclick="window.open('${sanitizedJob.applyLink}', '_blank')">
+                    Apply Now
+                </button>
+                <a href="view.html?job_id=${job.job_id}" class="save-btn" >
+                    View Details
+                </a>
                 </div>
             </div>
         `;
@@ -114,13 +110,13 @@ function loadPreviousSearch() {
     if (savedSearch) {
         const { searchQuery, jobs } = JSON.parse(savedSearch);
         
-        // Restore last search values in input fields
         document.getElementById("jobTitle").value = searchQuery.jobTitle;
         document.getElementById("location").value = searchQuery.location;
 
         displayJobs(jobs);
     }
 }
+
 
 
 

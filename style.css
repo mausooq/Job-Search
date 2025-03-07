@@ -171,9 +171,12 @@ button:hover {
 }
 
 .save-btn {
+
+  text-decoration: none;
   margin: 1em 0;
   background-color: white;
   color: #2563eb;
+  padding: .7em;
   border: 1px solid #2563eb;
 }
 
